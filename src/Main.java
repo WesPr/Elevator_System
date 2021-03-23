@@ -1,6 +1,9 @@
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
+        /**
+         * Instantiating building, passengers and passengers requests on each floor.
+         */
         Building building1 = new Building(4,1);
         building1.getElevator(1).setCapacity(4);
 
@@ -15,8 +18,6 @@ public class Main {
         Passenger passenger7 = new Passenger(1);
 
         Passenger passenger8 = new Passenger(4);
-
-
 
 
         building1.getFloor(1).addToWaitList(passenger1);
@@ -34,7 +35,9 @@ public class Main {
         ElevatorController ev = new ElevatorController(building1);
 
 
-
+        /**
+         *  Running elevator
+         */
         for(int i = 0; i < 10; i++){
             ev.moveElevator();
         }

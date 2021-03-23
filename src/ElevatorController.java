@@ -128,12 +128,6 @@ public class ElevatorController {
                 && currentFloor > 1) {
             building.getElevator(1).decrementFloor();
         }
-        for (int i = 0; i < 3; i++) {
-
-            System.out.print("#");
-            Thread.sleep(1000);
-        }
-        System.out.println();
     }
 
     //compare current floor to next closest floor request using the difference of going up or down if middle floors.
@@ -145,29 +139,24 @@ public class ElevatorController {
         int downwardsCount = 0;
         int maxFloors = building.getMaxFloors();
         int minFloor = 1;
-        int finalFloorUp = currentFloor;
-        int finalFloorDown = currentFloor;
+
 
         //upwards count
         while (currentFloor < maxFloors && containsRequest){
            currentFloor++;
            upwardsCount++;
-           finalFloorUp++;
         }
         currentFloor = temp;
         //downwards count
         while (currentFloor > minFloor && containsRequest){
             currentFloor--;
             downwardsCount++;
-            finalFloorDown++;
         }
 
-        if(upwardsCount > downwardsCount){
-            building.getElevator(1).setCurrentFloor(finalFloorUp);
+        if(upwardsCount < downwardsCount){
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
         }
         else{
-            building.getElevator(1).setCurrentFloor(finalFloorDown);
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
         }
 
