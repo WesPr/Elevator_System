@@ -9,7 +9,7 @@ public class Elevator {
 
     public Elevator(){
         this.currentFloor = 1;
-        this.elevatorDirection = ElevatorDirection.Idle;
+        this.elevatorDirection = ElevatorDirection.Up;
         this.passengersInElevator= new ArrayList<>();
     }
 

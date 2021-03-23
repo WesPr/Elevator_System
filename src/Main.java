@@ -32,15 +32,15 @@ public class Main {
 
         building1.getFloor(3).addToWaitList(passenger8);
 
+
         ElevatorController ev = new ElevatorController(building1);
 
 
         /**
          *  Running elevator
          */
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 7; i++){
             ev.moveElevator();
         }
-
     }
 }

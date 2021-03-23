@@ -1,14 +1,14 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ElevatorController {
 
     Building building;
+    int idleRequest = 0;
 
     public ElevatorController(Building building) {
         this.building = building;
     }
+
     /**
      * Simulation of elevator moving to each floor.
      */
@@ -36,14 +36,13 @@ public class ElevatorController {
         int sizeOfList = waitingPassengers.size();
         System.out.println("Currently waiting passengers: " + waitingPassengers.size());
 
-
         //check to see if elevator is empty.
         if (passengers.isEmpty()) {
             //check to see if passengers waiting on floor.
             if (!(waitingPassengers.isEmpty())) {
                 //peek first passenger to determine direction.
-                int firstWaitingPas = building.getFloor(currentFloor).getPassengerWaitingList().peekFirst()
-                        .getDestination_floor();
+                int firstWaitingPas = Objects.requireNonNull(building.getFloor(currentFloor).getPassengerWaitingList()
+                        .peekFirst()).getDestination_floor();
                 //if first passenger is higher than currentFloor, going up.
                 if (firstWaitingPas > currentFloor) {
                     building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
@@ -90,12 +89,27 @@ public class ElevatorController {
                     System.out.println("Passengers now in elevator: " + inElevator);
                 }
                 //passengers empty and floor level empty
-                //check what floor elevator is on and wait for next floor request
-            }else{
-                int inElevator = building.getElevator(1).getPassengersInElevator().size();
-                System.out.println("Passengers now in elevator: " + inElevator);
-                lookForRequest();
-            }
+                //check to see if there is a floor request - direction continues
+                //if not, set idle
+            } else {
+                    if(idleRequest == 0){
+                        idleRequest = lookForRequest();
+                    }
+                    if(building.getElevator(1).getElevatorDirection() == ElevatorDirection.Up){
+                        building.getElevator(1).incrementFloor();
+                        System.out.println("Current floor: " + currentFloor);
+                        System.out.println("Currently waiting passengers: " + waitingPassengers.size());
+                        int inElevator = building.getElevator(1).getPassengersInElevator().size();
+                        System.out.println("Passengers now in elevator " + inElevator);
+                    }
+                    else{
+                        building.getElevator(1).decrementFloor();
+                        System.out.println("Current floor: " + currentFloor);
+                        System.out.println("Currently waiting passengers: " + waitingPassengers.size());
+                        int inElevator = building.getElevator(1).getPassengersInElevator().size();
+                        System.out.println("Passengers now in elevator " + inElevator);
+                    }
+                }
             //Elevator has passengers
         } else {
             int count = 0;
@@ -131,7 +145,7 @@ public class ElevatorController {
     }
 
     //compare current floor to next closest floor request using the difference of going up or down if middle floors.
-    public void lookForRequest(){
+    public int lookForRequest() {
         int currentFloor = building.getElevator(1).getCurrentFloor();
         int temp = currentFloor;
         boolean containsRequest = !(building.getFloor(currentFloor).getPassengerWaitingList().isEmpty());
@@ -139,34 +153,37 @@ public class ElevatorController {
         int downwardsCount = 0;
         int maxFloors = building.getMaxFloors();
         int minFloor = 1;
-
+        int upwardRequest;
+        int downwardRequest;
 
         //upwards count
-        while (currentFloor < maxFloors && !(containsRequest)){
-           currentFloor++;
-           upwardsCount++;
+        while ((currentFloor < maxFloors) || (!(containsRequest))) {
+            currentFloor++;
+            upwardsCount++;
         }
-        currentFloor = temp;
+        upwardRequest = currentFloor;
+        building.getElevator(1).setCurrentFloor(temp);
         //downwards count
-        while (currentFloor > minFloor && !(containsRequest)){
+        while (currentFloor > minFloor || !(containsRequest)) {
             currentFloor--;
             downwardsCount++;
         }
+        downwardRequest = currentFloor;
+        building.getElevator(1).setCurrentFloor(temp);
 
-        if(upwardsCount < downwardsCount){
+        if (upwardsCount < downwardsCount) {
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
-        }
-        else if(building.getElevator(1).getCurrentFloor() == 1){
+            return upwardRequest;
+        } else if (currentFloor == building.getMaxFloors()) {
+            building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
+            return downwardRequest;
+        } else if (currentFloor == 1) {
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
-        }
-        else if(building.getElevator(1).getCurrentFloor() == maxFloors){
+            return upwardRequest;
+        } else {
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
+            return downwardRequest;
         }
-        else{
-            building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
-        }
-
-
     }
 }
 
