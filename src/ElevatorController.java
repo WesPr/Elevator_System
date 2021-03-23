@@ -142,19 +142,25 @@ public class ElevatorController {
 
 
         //upwards count
-        while (currentFloor < maxFloors && containsRequest){
+        while (currentFloor < maxFloors && !(containsRequest)){
            currentFloor++;
            upwardsCount++;
         }
         currentFloor = temp;
         //downwards count
-        while (currentFloor > minFloor && containsRequest){
+        while (currentFloor > minFloor && !(containsRequest)){
             currentFloor--;
             downwardsCount++;
         }
 
         if(upwardsCount < downwardsCount){
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
+        }
+        else if(building.getElevator(1).getCurrentFloor() == 1){
+            building.getElevator(1).setElevatorDirection(ElevatorDirection.Up);
+        }
+        else if(building.getElevator(1).getCurrentFloor() == maxFloors){
+            building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
         }
         else{
             building.getElevator(1).setElevatorDirection(ElevatorDirection.Down);
